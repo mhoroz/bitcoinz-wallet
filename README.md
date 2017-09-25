@@ -1,3 +1,7 @@
+# BitcoinZ Desktop GUI Wallet
+
+*BitcoinZ Desktop GUI Wallet is based on ZENCash Desktop GUI Wallet*
+
 # [ZENCash](https://zensystem.io/) Desktop GUI Wallet
 
 ## Graphical user interface wrapper for the [ZENCash](https://zensystem.io/) command line tools
