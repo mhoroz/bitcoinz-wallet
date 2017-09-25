@@ -39,13 +39,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -71,7 +71,7 @@ import com.vaklinov.zcashui.msg.MessagingPanel;
 
 
 /**
- * Main ZENCash Window.
+ * Main BitcoinZ Window.
  *
  * @author Ivan Vaklinov <ivan@vaklinov.com>
  */
@@ -104,11 +104,12 @@ public class ZCashUI
     private MessagingPanel   messagingPanel;
     
     JTabbedPane tabs;
+    public static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~`!@#$%^&*()-_=+[{]}\\|;:\'\",<.>/?";
 
     public ZCashUI(StartupProgressDialog progressDialog)
         throws IOException, InterruptedException, WalletCallException
     {
-        super("ZENCash Swing Wallet UI 0.73.6");
+        super("BitcoinZ Windows Wallet UI 0.73.6");
         
         if (progressDialog != null)
         {
@@ -117,7 +118,7 @@ public class ZCashUI
         
         ClassLoader cl = this.getClass().getClassLoader();
 
-        this.setIconImage(new ImageIcon(cl.getResource("images/ZEN-yellow.orange-logo.png")).getImage());
+        this.setIconImage(new ImageIcon(cl.getResource("images/BitcoinZ.png")).getImage());
 
         Container contentPane = this.getContentPane();
 
@@ -155,17 +156,16 @@ public class ZCashUI
         this.walletOps = new WalletOperations(
             	this, tabs, dashboard, addresses, sendPanel, installationObserver, clientCaller, errorReporter);
 
-        int width = 870;
-        
+        int width = 1024;
+
         OS_TYPE os = OSUtil.getOSType();
-    	
         // Window needs to be larger on Mac/Windows - typically
     	if ((os == OS_TYPE.WINDOWS) || (os == OS_TYPE.MAC_OS))
     	{
-    		width += 100;
+    		width = 1024;
     	}
-        
-        this.setSize(new Dimension(width, 440));
+
+        this.setSize(new Dimension(width, 768));
 
         // Build menu
         JMenuBar mb = new JMenuBar();
@@ -391,7 +391,7 @@ public class ZCashUI
 
                 JOptionPane.showMessageDialog(
                     ZCashUI.this.getRootPane().getParent(),
-                    "The ZENCash GUI Wallet is currently considered experimental. Use of this software\n" +
+                    "The BitcoinZ GUI Wallet is currently considered experimental. Use of this software\n" +
                     "comes at your own risk! Be sure to read the list of known issues and limitations\n" +
                     "at this page: https://github.com/ZencashOfficial/zencash-swing-wallet-ui\n\n" +
                     "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n" +
@@ -459,7 +459,7 @@ public class ZCashUI
         		possiblyCreateZENConfigFile();
         	}
         	
-        	Log.info("Starting ZENCash Swing Wallet ...");
+        	Log.info("Starting BitcoinZ Windows Wallet ...");
         	Log.info("OS: " + System.getProperty("os.name") + " = " + os);
         	Log.info("Current directory: " + new File(".").getCanonicalPath());
         	Log.info("Class path: " + System.getProperty("java.class.path"));
@@ -493,7 +493,7 @@ public class ZCashUI
 	            }
             }
             
-            // If zend is currently not running, do a startup of the daemon as a child process
+            // If zcashd is currently not running, do a startup of the daemon as a child process
             // It may be started but not ready - then also show dialog
             ZCashInstallationObserver initialInstallationObserver = 
             	new ZCashInstallationObserver(OSUtil.getProgramDirectory());
@@ -520,7 +520,7 @@ public class ZCashUI
                 if ((wce.getMessage().indexOf("{\"code\":-28") != -1) || // Started but not ready
                 	(wce.getMessage().indexOf("error code: -28") != -1))
                 {
-                	Log.info("zend is currently starting...");
+                	Log.info("zcashd is currently starting...");
                 	daemonStartInProgress = true;
                 }
             }
@@ -529,7 +529,7 @@ public class ZCashUI
             if ((zcashdInfo.status != DAEMON_STATUS.RUNNING) || (daemonStartInProgress))
             {
             	Log.info(
-            		"zend is not runing at the moment or has not started/synchronized 100% - showing splash...");
+            		"zcashd is not runing at the moment or has not started/synchronized 100% - showing splash...");
 	            startupBar = new StartupProgressDialog(initialClientCaller);
 	            startupBar.setVisible(true);
 	            startupBar.waitForStartup();
@@ -560,7 +560,7 @@ public class ZCashUI
             {
                 JOptionPane.showMessageDialog(
                         null,
-                        "It appears that zend has been started but is not ready to accept wallet\n" +
+                        "It appears that zcashd has been started but is not ready to accept wallet\n" +
                         "connections. It is still loading the wallet and blockchain. Please try to \n" +
                         "start the GUI wallet later...",
                         "Wallet communication error",
@@ -569,9 +569,9 @@ public class ZCashUI
             {
                 JOptionPane.showMessageDialog(
                     null,
-                    "There was a problem communicating with the ZENCash daemon/wallet. \n" +
-                    "Please ensure that the ZENCash server zend is started (e.g. via \n" + 
-                    "command  \"zend --daemon\"). Error message is: \n" +
+                    "There was a problem communicating with the BitcoinZ daemon/wallet. \n" +
+                    "Please ensure that the BitcoinZ server zcashd is started (e.g. via \n" + 
+                    "command  \"zcashd --daemon\"). Error message is: \n" +
                      wce.getMessage() +
                     "See the console output for more detailed error information!",
                     "Wallet communication error",
@@ -602,7 +602,14 @@ public class ZCashUI
             System.exit(4);
         }
     }
-    
+
+    private static String getPassword(Random random) {
+        int lenght = random.nextInt(15);
+        StringBuilder pass = new StringBuilder();
+        IntStream.range(0, lenght)
+                .forEach(i -> pass.append(Character.toString(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())))));
+        return pass.toString();
+    }
     
      public static void possiblyCreateZENConfigFile()
         throws IOException
@@ -619,45 +626,31 @@ public class ZCashUI
 			}
 		}
 		
-		File zenConfigFile = new File(dir, "zen.conf");
+		File zenConfigFile = new File(dir, "bitcoinz.conf");
 		
 		if (!zenConfigFile.exists())
 		{
-			Log.info("ZEN configuration file " + zenConfigFile.getCanonicalPath() + 
+			Log.info("BitcoinZ configuration file " + zenConfigFile.getCanonicalPath() +
 					 " does not exist. It will be created with default settings.");
 			
-			Random r = new Random(System.currentTimeMillis());
+			Random random = new SecureRandom();
 			
 			PrintStream configOut = new PrintStream(new FileOutputStream(zenConfigFile));
 			
 			configOut.println("#############################################################################");
-			configOut.println("#                         ZEN configuration file                            #");
+			configOut.println("#                         BitcoinZ configuration file                            #");
 			configOut.println("#############################################################################");
-			configOut.println("# This file has been automatically generated by the ZENCash GUI wallet with #");
+			configOut.println("# This file has been automatically generated by the BitcoinZ GUI wallet with #");
 			configOut.println("# default settings. It may be further cutsomized by hand only.              #");
 			configOut.println("#############################################################################");
 			configOut.println("# Creation date: " + new Date().toString());
 			configOut.println("#############################################################################");
 			configOut.println("");
-			configOut.println("# The rpcuser/rpcpassword are used for the local call to zend");
-			configOut.println("rpcuser=User" + Math.abs(r.nextInt()));
-			configOut.println("rpcpassword=Pass" + Math.abs(r.nextInt()) + "" + 
-			                                       Math.abs(r.nextInt()) + "" + 
-					                               Math.abs(r.nextInt()));
+			configOut.println("# The rpcuser/rpcpassword are used for the local call to zcashd");
+			configOut.println("rpcuser=User" + getPassword(random));
+			configOut.println("rpcpassword=Pass" + getPassword(random));
 			configOut.println("");
-			
-			/*
-			 * This is not necessary as of release:
-			 *  https://github.com/ZencashOfficial/zen/releases/tag/v2.0.9-3-b8d2ebf
-			configOut.println("# Well-known nodes to connect to - to speed up acquiring initial connections");
-			configOut.println("addnode=zpool.blockoperations.com"); 
-			configOut.println("addnode=luckpool.org:8333");
-			configOut.println("addnode=zencash.cloud");
-			configOut.println("addnode=zen.suprnova.cc");
-			configOut.println("addnode=zen.bitfire.one");
-			configOut.println("addnode=zenmine.pro");
-			*/
-			
+
 			configOut.close();
 		}
     }

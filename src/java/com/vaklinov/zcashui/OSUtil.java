@@ -102,7 +102,7 @@ public class OSUtil
 	// Returns the name of the zcashd server - may vary depending on the OS.
 	public static String getZCashd()
 	{
-		String zcashd = "zend";
+		String zcashd = "zcashd";
 		
 		OS_TYPE os = getOSType();
 		if (os == OS_TYPE.WINDOWS)
@@ -114,10 +114,10 @@ public class OSUtil
 	}
 	
 	
-	// Returns the name of the zen-cli tool - may vary depending on the OS.
+	// Returns the name of the zcash-cli tool - may vary depending on the OS.
 	public static String getZCashCli()
 	{
-		String zcashcli = "zen-cli";
+		String zcashcli = "zcash-cli";
 		
 		OS_TYPE os = getOSType();
 		if (os == OS_TYPE.WINDOWS)
@@ -180,13 +180,13 @@ public class OSUtil
 		
 		if (os == OS_TYPE.MAC_OS)
 		{
-			return new File(System.getProperty("user.home") + "/Library/Application Support/Zen").getCanonicalPath();
+			return new File(System.getProperty("user.home") + "/Library/Application Support/BitcoinZ").getCanonicalPath();
 		} else if (os == OS_TYPE.WINDOWS)
 		{
-			return new File(System.getenv("APPDATA") + "\\Zen").getCanonicalPath();
+			return new File(System.getenv("APPDATA") + "\\BitcoinZ").getCanonicalPath();
 		} else
 		{
-			return new File(System.getProperty("user.home") + "/.zen").getCanonicalPath();
+			return new File(System.getProperty("user.home") + "/.bitcoinz").getCanonicalPath();
 		}
 	}
 
@@ -242,9 +242,7 @@ public class OSUtil
 		    return uname.execute();
 		}
 	}
-
-
-	// Can be used to find zend/zen-cli if it is not found in the same place as the wallet JAR
+	
 	// Null if not found
 	public static File findZCashCommand(String command)
 		throws IOException
@@ -252,7 +250,7 @@ public class OSUtil
 	    File f;
 	    
 	    // Try with system property zcash.location.dir - may be specified by caller
-	    String ZCashLocationDir = System.getProperty("zen.location.dir");
+	    String ZCashLocationDir = System.getProperty("bitcoinz.location.dir");
 	    if ((ZCashLocationDir != null) && (ZCashLocationDir.trim().length() > 0))
 	    {
 	        f = new File(ZCashLocationDir + File.separator + command);
@@ -272,11 +270,11 @@ public class OSUtil
 				"/usr/bin/", // Typical Ubuntu
 				"/bin/",
 				"/usr/local/bin/",
-				"/usr/local/zen/bin/",
-				"/usr/lib/zen/bin/",
+				"/usr/local/bitcoinz/bin/",
+				"/usr/lib/bitcoinz/bin/",
 				"/opt/local/bin/",
-				"/opt/local/zen/bin/",
-				"/opt/zen/bin/"
+				"/opt/local/bitcoinz/bin/",
+				"/opt/bitcoinz/bin/"
 			};
 	
 			for (String d : dirs)
@@ -297,7 +295,7 @@ public class OSUtil
 	    		File pf = new File(programFiles);
 	    		if (pf.exists() && pf.isDirectory())
 	    		{
-	    			File ZDir = new File(pf, "Zen");
+	    			File ZDir = new File(pf, "BitcoinZ");
 	    			if (ZDir.exists() && ZDir.isDirectory())
 	    			{
 	    				File cf = new File(ZDir, command);

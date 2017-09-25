@@ -16,34 +16,6 @@ public class Test1
 	public static void main(String[] args) 
 		throws IOException
 	{
-//		JsonObject toArgument = new JsonObject();
-//		toArgument.set("address", "111111111111111111");
-//		toArgument.set("memo", "222222222222222222222222222");
-//		toArgument.set("amount", "\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF");
-//		
-//		JsonArray toMany = new JsonArray();
-//		toMany.add(toArgument);
-//
-//		System.out.println(toMany.toString().
-//		    replace("\"amount\":\"\uFFFF\uFFFF\uFFFF\uFFFF\uFFFF\"", 
-//                    "\"amount\":" + new DecimalFormat("#########.00######").format(Double.valueOf("1234567890000"))));
-//		
-//		
-//		final Date startDate = new Date("04 Oct 2016 00:00:00 GMT");
-//		System.out.println(startDate.toString());
-		
-		//System.out.println(hexify("\n"));
-		
-		
-		String phrase = "Z pigs likes to snooze. ZZZZ";
-		System.out.println(phrase + "|=> " + Util.convertGroupPhraseToZPrivateKey(phrase));
-		phrase = "ABCD";
-		System.out.println(phrase + "|=> " + Util.convertGroupPhraseToZPrivateKey(phrase));
-		phrase = "ZEN is great";
-		System.out.println(phrase + "|=> " + Util.convertGroupPhraseToZPrivateKey(phrase));
-		phrase = "Here is a long phrase that we will see ... how it converts to a key";
-		System.out.println(phrase + "|=> " + Util.convertGroupPhraseToZPrivateKey(phrase));
-		
 	}
 	
 	

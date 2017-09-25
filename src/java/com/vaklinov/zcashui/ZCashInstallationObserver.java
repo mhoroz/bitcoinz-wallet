@@ -75,7 +75,7 @@ public class ZCashInstallationObserver
 		if (!dir.exists() || dir.isFile())
 		{
 			throw new InstallationDetectionException(
-				"The ZENCash installation directory " + installDir + " does not exist or is not " +
+				"The BitcoinZ installation directory " + installDir + " does not exist or is not " +
 			    "a directory or is otherwise inaccessible to the wallet!");
 		}
 
@@ -88,15 +88,15 @@ public class ZCashInstallationObserver
 			zcashcli = OSUtil.findZCashCommand(OSUtil.getZCashCli());
 		}
 
-		Log.info("Using ZENCash utilities: " +
-		                   "zend: "    + ((zcashd != null) ? zcashd.getCanonicalPath() : "<MISSING>") + ", " +
-		                   "zen-cli: " + ((zcashcli != null) ? zcashcli.getCanonicalPath() : "<MISSING>"));
+		Log.info("Using BitcoinZ utilities: " +
+		                   "zcashd: "    + ((zcashd != null) ? zcashd.getCanonicalPath() : "<MISSING>") + ", " +
+		                   "zcash-cli: " + ((zcashcli != null) ? zcashcli.getCanonicalPath() : "<MISSING>"));
 
 		if ((zcashd == null) || (zcashcli == null) || (!zcashd.exists()) || (!zcashcli.exists()))
 		{
 			throw new InstallationDetectionException(
-				"The ZENCash GUI Wallet installation directory " + installDir + " needs\nto contain " +
-				"the command line utilities zend and zen-cli. At least one of them is missing! \n" +
+				"The BitcoinZ GUI Wallet installation directory " + installDir + " needs\nto contain " +
+				"the command line utilities zcashd and zcash-cli. At least one of them is missing! \n" +
 				"Please place files ZENCashSwingWalletUI.jar, " + OSUtil.getZCashCli() + ", " + 
 				OSUtil.getZCashd() + " in the same directory.");
 		}
@@ -164,7 +164,7 @@ public class ZCashInstallationObserver
 					} catch (NumberFormatException nfe) { /* TODO: Log or handle exception */ };
 				} else if (i == 10)
 				{
-					if ((token.equals("zend")) || (token.endsWith("/zend")))
+					if ((token.equals("zcashd")) || (token.endsWith("/zcashd")))
 					{
 						info.status = DAEMON_STATUS.RUNNING;
 						foundZCash = true;
@@ -230,11 +230,11 @@ public class ZCashInstallationObserver
 
 				if (i == 0)
 				{
-					if (token.equals("zend.exe") || token.equals("zend"))
+					if (token.equals("zcashd.exe") || token.equals("zcashd"))
 					{
 						info.status = DAEMON_STATUS.RUNNING;
 						foundZCash = true;
-						//System.out.println("zend process data is: " + line);
+						//System.out.println("zcashd process data is: " + line);
 					}
 				} else if ((i >= 4) && foundZCash)
 				{
@@ -257,7 +257,7 @@ public class ZCashInstallationObserver
 				} catch (NumberFormatException nfe)
 				{
 					info.residentSizeMB = 0;
-					Log.error("Error: could not find the numeric memory size of zend: " + size);
+					Log.error("Error: could not find the numeric memory size of zcashd: " + size);
 				};
 				
 				break;
@@ -285,7 +285,7 @@ public class ZCashInstallationObserver
 		}
 		
 		String blockChainDir = OSUtil.getBlockchainDirectory();
-		File zenConf = new File(blockChainDir + File.separator + "zen.conf");
+		File zenConf = new File(blockChainDir + File.separator + "bitcoinz.conf");
 		if (zenConf.exists())
 		{
 			Properties confProps = new Properties();
