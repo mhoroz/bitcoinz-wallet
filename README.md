@@ -1,4 +1,6 @@
-# BitcoinZ Desktop GUI Wallet
+# BitcoinZ Windows Wallet
+
+[Download here](https://github.com/bitcoinz-pod/bitcoinz-windows-wallet/releases)
 
 *BitcoinZ Desktop GUI Wallet is based on ZENCash Desktop GUI Wallet*
 
