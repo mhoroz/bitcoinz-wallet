@@ -503,7 +503,7 @@ public class DashboardPanel
 			return;
 		}
 		
-		// Format double numbers - else sometimes we get exponential notation 1E-4 BTZ
+		// Format double numbers - else sometimes we get exponential notation 1E-4 BTCZ
 		DecimalFormat df = new DecimalFormat("########0.00######");
 		
 		String transparentBalance = df.format(balance.transparentBalance);
@@ -521,11 +521,11 @@ public class DashboardPanel
 		String text =
 			"<html>" + 
 		    "<span style=\"font-family:monospace;font-size:1em;" + color1 + "\">Transparent balance: <span style=\"font-size:1.1em;\">" + 
-				transparentUCBalance + " BTZ </span></span><br/> " +
+				transparentUCBalance + " BTCZ </span></span><br/> " +
 			"<span style=\"font-family:monospace;font-size:1em;" + color2 + "\">Private (Z) balance: <span style=\"font-weight:bold;font-size:1.1em;\">" + 
-		    	privateUCBalance + " BTZ </span></span><br/> " +
+		    	privateUCBalance + " BTCZ </span></span><br/> " +
 			"<span style=\"font-family:monospace;;font-size:1em;" + color3 + "\">Total (Z+T) balance: <span style=\"font-weight:bold;font-size:1.35em;\">" + 
-		    	totalUCBalance + " BTZ </span></span>" +
+		    	totalUCBalance + " BTCZ </span></span>" +
 			"<br/>  </html>";
 		
 		this.walletBalanceLabel.setText(text);
@@ -539,9 +539,9 @@ public class DashboardPanel
 					  "Unconfirmed (unspendable) balance is being shown due to an<br/>" + 
 		              "ongoing transaction! Actual confirmed (spendable) balance is:<br/>" +
 		              "<span style=\"font-size:5px\"><br/></span>" +
-					  "Transparent: " + transparentBalance + " BTZ<br/>" +
-		              "Private ( Z ): <span style=\"font-weight:bold\">" + privateBalance + " BTZ</span><br/>" +
-					  "Total ( Z+T ): <span style=\"font-weight:bold\">" + totalBalance + " BTZ</span>" +
+					  "Transparent: " + transparentBalance + " BTCZ<br/>" +
+		              "Private ( Z ): <span style=\"font-weight:bold\">" + privateBalance + " BTCZ</span><br/>" +
+					  "Total ( Z+T ): <span style=\"font-weight:bold\">" + totalBalance + " BTCZ</span>" +
 					  "</html>";
 		}
 		

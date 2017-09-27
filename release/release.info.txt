@@ -1,0 +1,2 @@
+BitcoinZ binaries: https://github.com/bitcoinz-pod/bitcoinz-win/releases
+JRE: https://github.com/ojdkbuild/ojdkbuild/releases

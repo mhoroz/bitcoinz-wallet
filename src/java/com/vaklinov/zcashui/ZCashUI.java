@@ -109,7 +109,7 @@ public class ZCashUI
     public ZCashUI(StartupProgressDialog progressDialog)
         throws IOException, InterruptedException, WalletCallException
     {
-        super("BitcoinZ Windows Wallet UI 0.73.6");
+        super("BitcoinZ Windows Wallet 1.1.0_1.1");
         
         if (progressDialog != null)
         {
@@ -165,7 +165,7 @@ public class ZCashUI
     		width = 1024;
     	}
 
-        this.setSize(new Dimension(width, 768));
+        this.setSize(new Dimension(width, 600));
 
         // Build menu
         JMenuBar mb = new JMenuBar();

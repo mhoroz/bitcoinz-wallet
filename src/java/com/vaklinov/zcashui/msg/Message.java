@@ -47,7 +47,7 @@ import com.vaklinov.zcashui.Util;
 
 
 /**
- * Encapsulates a BTZ message
+ * Encapsulates a BTCZ message
  *
  * @author Ivan Vaklinov <ivan@vaklinov.com>
  */
