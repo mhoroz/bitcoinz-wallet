@@ -604,9 +604,8 @@ public class ZCashUI
     }
 
     private static String getPassword(Random random) {
-        int lenght = random.nextInt(15);
         StringBuilder pass = new StringBuilder();
-        IntStream.range(0, lenght)
+        IntStream.range(0, 15)
                 .forEach(i -> pass.append(Character.toString(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())))));
         return pass.toString();
     }
