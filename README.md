@@ -4,14 +4,17 @@
 
 *BitcoinZ Desktop GUI Wallet is based on ZENCash Desktop GUI Wallet*
 
+Security Warnings
+-----------------
+
+**BitcoinZ is experimental and a work-in-progress.** Use at your own risk.
+
 # [ZENCash](https://zensystem.io/) Desktop GUI Wallet
 
 ## Graphical user interface wrapper for the [ZENCash](https://zensystem.io/) command line tools
 
 This program provides a Graphical User Interface (GUI) for the ZENCash client tools that acts as a wrapper and 
 presents the information in a user-friendly manner.
-
-![Screenshot](https://github.com/ZencashOfficial/zencash-swing-wallet-ui/raw/master/docs/ZENCashWallet.png "Main Window")
 
 #### New/Experimental: [ZENCash Desktop GUI Wallet for Mac OS](https://github.com/ZencashOfficial/zencash-swing-wallet-ui/blob/master/docs/Release_0.73.4.md) is available
 
