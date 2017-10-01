@@ -201,13 +201,13 @@ public class OSUtil
 	    
 	    if (os == OS_TYPE.MAC_OS)
 	    {
-	        dir = new File(userHome, "Library/Application Support/ZENCashSwingWalletUI");
+	        dir = new File(userHome, "Library/Application Support/BitcoinZWallet");
 	    } else if (os == OS_TYPE.WINDOWS)
 		{
-			dir = new File(System.getenv("LOCALAPPDATA") + "\\ZENCashSwingWalletUI");
+			dir = new File(System.getenv("LOCALAPPDATA") + "\\BitcoinZWallet");
 		} else
 	    {
-	        dir = new File(userHome.getCanonicalPath() + File.separator + ".ZENCashSwingWalletUI");
+	        dir = new File(userHome.getCanonicalPath() + File.separator + ".BitcoinZWallet");
 	    }
 	    
 		if (!dir.exists())
