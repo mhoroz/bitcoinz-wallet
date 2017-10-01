@@ -29,11 +29,7 @@
 package com.vaklinov.zcashui;
 
 
-import java.awt.Container;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -110,7 +106,7 @@ public class ZCashUI
     public ZCashUI(StartupProgressDialog progressDialog)
         throws IOException, InterruptedException, WalletCallException
     {
-        super("BitcoinZ Windows Wallet 1.1.0_1.2");
+        super("BitcoinZ Wallet 1.1.0_1.2");
         
         if (progressDialog != null)
         {
@@ -193,7 +189,10 @@ public class ZCashUI
         wallet.add(menuItemShowPrivateKey = new JMenuItem("Show private key...", KeyEvent.VK_P));
         menuItemShowPrivateKey.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, accelaratorKeyMask));
         wallet.add(menuItemImportOnePrivateKey = new JMenuItem("Import one private key...", KeyEvent.VK_N));
-        menuItemImportOnePrivateKey.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, accelaratorKeyMask));        
+        menuItemImportOnePrivateKey.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, accelaratorKeyMask));
+        JMenuItem menuItemOpenWalletDirectory = new JMenuItem("Open wallet directory...");
+        wallet.add(menuItemOpenWalletDirectory);
+
         mb.add(wallet);
 
         JMenu messaging = new JMenu("Messaging");
@@ -312,7 +311,16 @@ public class ZCashUI
                }
            }
        );
-       
+
+       menuItemOpenWalletDirectory.addActionListener(e -> {
+                   try {
+                       Desktop.getDesktop().open(new File(OSUtil.getBlockchainDirectory()));
+                   } catch (IOException e1) {
+                       Log.error("Open wallet directory exception.", e1);
+                   }
+               }
+       );
+
        menuItemOwnIdentity.addActionListener(   
                new ActionListener()
                {
@@ -473,7 +481,7 @@ public class ZCashUI
         		possiblyCreateZENConfigFile();
         	}
         	
-        	Log.info("Starting BitcoinZ Windows Wallet ...");
+        	Log.info("Starting BitcoinZ Wallet ...");
         	Log.info("OS: " + System.getProperty("os.name") + " = " + os);
         	Log.info("Current directory: " + new File(".").getCanonicalPath());
         	Log.info("Class path: " + System.getProperty("java.class.path"));

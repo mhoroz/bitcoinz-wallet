@@ -97,7 +97,7 @@ public class IdentityInfoDialog
 		JPanel detailsPanel = new JPanel();
 		detailsPanel.setLayout(new BoxLayout(detailsPanel, BoxLayout.Y_AXIS));
 		
-		addFormField(detailsPanel, "Nick name:",  nicknameTextField = new JTextField(40));
+		addFormField(detailsPanel, "Nick name*:",  nicknameTextField = new JTextField(40));
 		addFormField(detailsPanel, "First name:", firstnameTextField = new JTextField(40));
 		addFormField(detailsPanel, "Midle name:", middlenameTextField = new JTextField(40));
 		addFormField(detailsPanel, "Surname:",    surnameTextField = new JTextField(40));

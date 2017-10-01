@@ -1,4 +1,4 @@
-# BitcoinZ Windows Wallet
+# BitcoinZ Wallet
 
 [Download here](https://github.com/bitcoinz-pod/bitcoinz-windows-wallet/releases)
 
