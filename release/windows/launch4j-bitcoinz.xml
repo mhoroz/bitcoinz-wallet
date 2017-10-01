@@ -2,8 +2,8 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>..\build\jars\BitcoinZWindowsWallet.jar</jar>
-  <outfile>..\dist\bitcoinz-wallet.exe</outfile>
+  <jar>..\..\build\jars\BitcoinZWallet.jar</jar>
+  <outfile>..\..\bitcoinz-wallet\bitcoinz-wallet.exe</outfile>
   <errTitle></errTitle>
   <cmdLine>--windows-native</cmdLine>
   <chdir>client</chdir>

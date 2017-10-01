@@ -95,6 +95,7 @@ public class ZCashUI
     private JMenuItem menuItemOwnIdentity;
     private JMenuItem menuItemExportOwnIdentity;
     private JMenuItem menuItemImportContactIdentity;
+    private JMenuItem menuItemRemoveContactIdentity;
     private JMenuItem menuItemMessagingOptions;
 
     private DashboardPanel   dashboard;
@@ -109,7 +110,7 @@ public class ZCashUI
     public ZCashUI(StartupProgressDialog progressDialog)
         throws IOException, InterruptedException, WalletCallException
     {
-        super("BitcoinZ Windows Wallet 1.1.0_1.1");
+        super("BitcoinZ Windows Wallet 1.1.0_1.2");
         
         if (progressDialog != null)
         {
@@ -203,6 +204,8 @@ public class ZCashUI
         menuItemExportOwnIdentity.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, accelaratorKeyMask));        
         messaging.add(menuItemImportContactIdentity = new JMenuItem("Import contact identity...", KeyEvent.VK_Y));
         menuItemImportContactIdentity.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, accelaratorKeyMask));
+        messaging.add(menuItemRemoveContactIdentity = new JMenuItem("Remove contact...", KeyEvent.VK_R));
+        menuItemRemoveContactIdentity.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, accelaratorKeyMask));
         messaging.add(menuItemMessagingOptions = new JMenuItem("Options...", KeyEvent.VK_O));
         menuItemMessagingOptions.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, accelaratorKeyMask));
         
@@ -343,7 +346,18 @@ public class ZCashUI
                }
         );
        
-       menuItemMessagingOptions.addActionListener(   
+       menuItemRemoveContactIdentity.addActionListener(
+               new ActionListener()
+               {
+                   @Override
+                   public void actionPerformed(ActionEvent e)
+                   {
+            			ZCashUI.this.messagingPanel.removeSelectedContact();
+                   }
+               }
+        );
+
+       menuItemMessagingOptions.addActionListener(
                new ActionListener()
                {
                    @Override
@@ -393,7 +407,7 @@ public class ZCashUI
                     ZCashUI.this.getRootPane().getParent(),
                     "The BitcoinZ GUI Wallet is currently considered experimental. Use of this software\n" +
                     "comes at your own risk! Be sure to read the list of known issues and limitations\n" +
-                    "at this page: https://github.com/ZencashOfficial/zencash-swing-wallet-ui\n\n" +
+                    "at this page: https://github.com/bitcoinz-pod/bitcoinz-windows-wallet\n\n" +
                     "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n" +
                     "IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n" +
                     "FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n" +
@@ -570,7 +584,7 @@ public class ZCashUI
                 JOptionPane.showMessageDialog(
                     null,
                     "There was a problem communicating with the BitcoinZ daemon/wallet. \n" +
-                    "Please ensure that the BitcoinZ server zcashd is started (e.g. via \n" + 
+                    "Please ensure that the BitcoinZ server zcashd is started (e.g. via \n" +
                     "command  \"zcashd --daemon\"). Error message is: \n" +
                      wce.getMessage() +
                     "See the console output for more detailed error information!",

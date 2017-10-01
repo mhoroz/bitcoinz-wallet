@@ -97,7 +97,7 @@ public class ZCashInstallationObserver
 			throw new InstallationDetectionException(
 				"The BitcoinZ GUI Wallet installation directory " + installDir + " needs\nto contain " +
 				"the command line utilities zcashd and zcash-cli. At least one of them is missing! \n" +
-				"Please place files ZENCashSwingWalletUI.jar, " + OSUtil.getZCashCli() + ", " + 
+				"Please place files BitcoinZWallet.jar, " + OSUtil.getZCashCli() + ", " +
 				OSUtil.getZCashd() + " in the same directory.");
 		}
 	}

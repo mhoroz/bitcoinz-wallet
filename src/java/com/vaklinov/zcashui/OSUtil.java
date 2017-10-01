@@ -97,7 +97,7 @@ public class OSUtil
 			return OS_TYPE.OTHER_OS;
 		}
 	}
-	
+
 	
 	// Returns the name of the zcashd server - may vary depending on the OS.
 	public static String getZCashd()
@@ -135,7 +135,7 @@ public class OSUtil
 	{
 		// TODO: this way of finding the dir is JAR name dependent - tricky, may not work
 		// if program is repackaged as different JAR!
-		final String JAR_NAME = "ZENCashSwingWalletUI.jar";
+		final String JAR_NAME = "BitcoinZWallet.jar";
 		String cp = System.getProperty("java.class.path");
 		if ((cp != null) && (cp.indexOf(File.pathSeparator) == -1) &&
 			(cp.endsWith(JAR_NAME)))
