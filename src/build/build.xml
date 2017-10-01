@@ -83,7 +83,7 @@
 	
     <target name="ubuntuPackage" depends="jar">	
     	<mkdir dir="${ubuntu.package.dir}"/>
-	    <deb destfile="${ubuntu.package.dir}/bitcoinz-wallet_1.1.0_1.2_all.deb"
+	    <deb destfile="${ubuntu.package.dir}/bitcoinz-wallet_1.1.0.deb"
 	    	 control="${src.dir}/resources/ubuntu-package" 
 	    	 verbose="true">
 	    	
