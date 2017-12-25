@@ -39,7 +39,7 @@ public class ProvingKeyFetcher {
         try {
             verifyOrFetch(parent);
         } catch (InterruptedIOException iox) {
-            JOptionPane.showMessageDialog(parent, "The BitcoinZ wallet cannot proceed without a proving key.");
+            JOptionPane.showMessageDialog(parent, "The ZCL wallet cannot proceed without a proving key.");
             System.exit(-3);
         }
     }

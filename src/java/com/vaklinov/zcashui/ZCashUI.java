@@ -67,7 +67,7 @@ import com.vaklinov.zcashui.msg.MessagingPanel;
 
 
 /**
- * Main BitcoinZ Window.
+ * Main ZCL Window.
  *
  * @author Ivan Vaklinov <ivan@vaklinov.com>
  */
@@ -82,7 +82,7 @@ public class ZCashUI
 
     private JMenuItem menuItemExit;
     private JMenuItem menuItemAbout;
-    private JMenuItem menuItemEncrypt;
+//    private JMenuItem menuItemEncrypt;
     private JMenuItem menuItemBackup;
     private JMenuItem menuItemExportKeys;
     private JMenuItem menuItemImportKeys;
@@ -106,16 +106,16 @@ public class ZCashUI
     public ZCashUI(StartupProgressDialog progressDialog)
         throws IOException, InterruptedException, WalletCallException
     {
-        super("BitcoinZ Wallet 1.1.0_1.3");
+        super("ZCL Wallet 1.1.0_1.3 by BitcoinZ team");
         
         if (progressDialog != null)
         {
-        	progressDialog.setProgressText("Starting GUI wallet...");
+        	progressDialog.setProgressText("Starting ZCL Wallet by BitcoinZ team...");
         }
         
         ClassLoader cl = this.getClass().getClassLoader();
 
-        this.setIconImage(new ImageIcon(cl.getResource("images/BitcoinZ.png")).getImage());
+        this.setIconImage(new ImageIcon(cl.getResource("images/ZCL.png")).getImage());
 
         Container contentPane = this.getContentPane();
 
@@ -180,8 +180,8 @@ public class ZCashUI
         wallet.setMnemonic(KeyEvent.VK_W);
         wallet.add(menuItemBackup = new JMenuItem("Backup...", KeyEvent.VK_B));
         menuItemBackup.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, accelaratorKeyMask));
-        wallet.add(menuItemEncrypt = new JMenuItem("Encrypt...", KeyEvent.VK_E));
-        menuItemEncrypt.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, accelaratorKeyMask));
+//        wallet.add(menuItemEncrypt = new JMenuItem("Encrypt...", KeyEvent.VK_E));
+//        menuItemEncrypt.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, accelaratorKeyMask));
         wallet.add(menuItemExportKeys = new JMenuItem("Export private keys...", KeyEvent.VK_K));
         menuItemExportKeys.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, accelaratorKeyMask));
         wallet.add(menuItemImportKeys = new JMenuItem("Import private keys...", KeyEvent.VK_I));
@@ -211,7 +211,7 @@ public class ZCashUI
         mb.add(messaging);
 
         // TODO: Temporarily disable encryption until further notice - Oct 24 2016
-        menuItemEncrypt.setEnabled(false);
+//        menuItemEncrypt.setEnabled(false);
                         
         this.setJMenuBar(mb);
 
@@ -246,7 +246,7 @@ public class ZCashUI
             }
         );
 
-        menuItemBackup.addActionListener(   
+        menuItemBackup.addActionListener(
         	new ActionListener()
             {
                 @Override
@@ -257,16 +257,16 @@ public class ZCashUI
             }
         );
         
-        menuItemEncrypt.addActionListener(
-            new ActionListener()
-            {
-                @Override
-                public void actionPerformed(ActionEvent e)
-                {
-                    ZCashUI.this.walletOps.encryptWallet();
-                }
-            }
-        );
+//        menuItemEncrypt.addActionListener(
+//            new ActionListener()
+//            {
+//                @Override
+//                public void actionPerformed(ActionEvent e)
+//                {
+//                    ZCashUI.this.walletOps.encryptWallet();
+//                }
+//            }
+//        );
 
         menuItemExportKeys.addActionListener(   
             new ActionListener()
@@ -413,9 +413,9 @@ public class ZCashUI
 
                 JOptionPane.showMessageDialog(
                     ZCashUI.this.getRootPane().getParent(),
-                    "The BitcoinZ GUI Wallet is currently considered experimental. Use of this software\n" +
+                    "The ZCL GUI Wallet is currently considered experimental. Use of this software\n" +
                     "comes at your own risk! Be sure to read the list of known issues and limitations\n" +
-                    "at this page: https://github.com/bitcoinz-pod/bitcoinz-windows-wallet\n\n" +
+                    "at this page: https://github.com/bitcoinz-pod/bitcoinz-wallet/releases\n\n" +
                     "THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\n" +
                     "IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\n" +
                     "FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\n" +
@@ -481,7 +481,7 @@ public class ZCashUI
         		possiblyCreateZENConfigFile();
         	}
         	
-        	Log.info("Starting BitcoinZ Wallet ...");
+        	Log.info("Starting ZCL Wallet ...");
         	Log.info("OS: " + System.getProperty("os.name") + " = " + os);
         	Log.info("Current directory: " + new File(".").getCanonicalPath());
         	Log.info("Class path: " + System.getProperty("java.class.path"));
@@ -591,8 +591,8 @@ public class ZCashUI
             {
                 JOptionPane.showMessageDialog(
                     null,
-                    "There was a problem communicating with the BitcoinZ daemon/wallet. \n" +
-                    "Please ensure that the BitcoinZ server zcashd is started (e.g. via \n" +
+                    "There was a problem communicating with the ZCL daemon/wallet. \n" +
+                    "Please ensure that the ZCL server zcashd is started (e.g. via \n" +
                     "command  \"zcashd --daemon\"). Error message is: \n" +
                      wce.getMessage() +
                     "See the console output for more detailed error information!",
@@ -647,11 +647,11 @@ public class ZCashUI
 			}
 		}
 		
-		File zenConfigFile = new File(dir, "bitcoinz.conf");
+		File zenConfigFile = new File(dir, "zclassic.conf");
 		
 		if (!zenConfigFile.exists())
 		{
-			Log.info("BitcoinZ configuration file " + zenConfigFile.getCanonicalPath() +
+			Log.info("ZCL configuration file " + zenConfigFile.getCanonicalPath() +
 					 " does not exist. It will be created with default settings.");
 			
 			Random random = new SecureRandom();
@@ -659,17 +659,62 @@ public class ZCashUI
 			PrintStream configOut = new PrintStream(new FileOutputStream(zenConfigFile));
 			
 			configOut.println("#############################################################################");
-			configOut.println("#                         BitcoinZ configuration file                            #");
+			configOut.println("#                         ZCL configuration file                            #");
 			configOut.println("#############################################################################");
-			configOut.println("# This file has been automatically generated by the BitcoinZ GUI wallet with #");
+			configOut.println("# This file has been automatically generated by the ZCL GUI wallet with #");
 			configOut.println("# default settings. It may be further cutsomized by hand only.              #");
 			configOut.println("#############################################################################");
 			configOut.println("# Creation date: " + new Date().toString());
 			configOut.println("#############################################################################");
 			configOut.println("");
 			configOut.println("# The rpcuser/rpcpassword are used for the local call to zcashd");
-			configOut.println("rpcuser=User" + getPassword(random));
-			configOut.println("rpcpassword=Pass" + getPassword(random));
+			configOut.println("rpcuser=User");
+			configOut.println("rpcpassword=Pass");
+            // Nodes
+            configOut.println("addnode=dnsseed.zclassic.org:8133");
+            configOut.println("addnode=dnsseed.rotorproject.org:8133");
+            configOut.println("addnode=104.207.149.241:8133");
+            configOut.println("addnode=45.76.4.70:8133");
+            configOut.println("addnode=68.234.31.67:8133");
+            configOut.println("addnode=52.14.116.113:8133");
+            configOut.println("addnode=136.243.50.159:8133");
+            configOut.println("addnode=88.99.199.93:8133");
+            configOut.println("addnode=13.91.45.250:8133");
+            configOut.println("addnode=94.130.11.10:8133");
+            configOut.println("addnode=37.187.167.145:8133");
+            configOut.println("addnode=5.9.111.40:8133");
+            configOut.println("addnode=120.27.230.83:8133");
+            configOut.println("addnode=138.197.199.86:8133");
+            configOut.println("addnode=52.53.125.97:8133");
+            configOut.println("addnode=198.100.147.192:8133");
+            configOut.println("addnode=79.98.144.29:8133");
+            configOut.println("addnode=62.163.150.178:8133");
+            configOut.println("addnode=94.177.229.186:8133");
+            configOut.println("addnode=78.94.32.196:8133");
+            configOut.println("addnode=78.94.32.194:8133");
+            configOut.println("addnode=60.170.218.192:8133");
+            configOut.println("addnode=151.80.96.105:8133");
+            configOut.println("addnode=139.59.230.86:8133");
+            configOut.println("addnode=45.32.233.113:8133");
+            configOut.println("addnode=45.32.234.100:8133");
+            configOut.println("addnode=87.103.195.162:8133");
+            configOut.println("addnode=58.9.134.10:8133");
+            configOut.println("addnode=206.255.161.228:8133");
+            configOut.println("addnode=89.212.102.22:8133");
+            configOut.println("addnode=79.164.95.176:8133");
+            configOut.println("addnode=78.8.88.180:8133");
+            configOut.println("addnode=77.35.255.255:8133");
+            configOut.println("addnode=197.245.248.194:8133");
+            configOut.println("addnode=195.91.186.23:8133");
+            configOut.println("addnode=138.68.48.247:8133");
+            configOut.println("addnode=2.139.88.157:8133");
+            configOut.println("addnode=35.202.93.102:8133");
+            configOut.println("addnode=76.90.44.140:8133");
+            configOut.println("addnode=107.143.247.252:8133");
+            configOut.println("addnode=189.202.72.85:8133");
+            configOut.println("addnode=66.119.109.246:8133");
+
+
 			configOut.println("");
 
 			configOut.close();

@@ -27,14 +27,14 @@
  * THE SOFTWARE.                                    
  *
 -->
-<project name="BitcoinZWallet" basedir="../.." default="buildit">
+<project name="ZCLWallet" basedir="../.." default="buildit">
 	
     <property name="src.dir"     value="src"/>
 	<property name="lib.dir"     value="lib"/>
     <property name="build.dir"   value="build"/>
     <property name="classes.dir" value="${build.dir}/classes"/>
     <property name="jar.dir"     value="${build.dir}/jars"/>
-	<property name="ubuntu.package.dir" value="${build.dir}/../bitcoinz-wallet-ubuntu"/>
+	<property name="ubuntu.package.dir" value="${build.dir}/../zcl-wallet-ubuntu"/>
 
     <property name="main-class"  value="com.vaklinov.zcashui.ZCashUI"/>
 
@@ -81,22 +81,6 @@
         </jar>
     </target>
 	
-    <target name="ubuntuPackage" depends="jar">	
-    	<mkdir dir="${ubuntu.package.dir}"/>
-	    <deb destfile="${ubuntu.package.dir}/bitcoinz-wallet_1.1.0.deb"
-	    	 control="${src.dir}/resources/ubuntu-package" 
-	    	 verbose="true">
-	    	
-	      <data src="${jar.dir}/${ant.project.name}.jar" type="file">
-	        <mapper type="perm" filemode="755" prefix="/usr/lib/bitcoinz-wallet"/>
-	      </data>
-	      <data src="${src.dir}/resources/ubuntu-package/bitcoinz-wallet" type="file">
-	        <mapper type="perm" filemode="755" prefix="/usr/bin"/>
-	      </data>	    	
-	    </deb>
-	</target>
-	
-	
 	<target name="copyothers">
     	<copy todir="${jar.dir}" >  
     	    <fileset dir="${lib.dir}">  
@@ -105,7 +89,7 @@
     	</copy>
 	</target>
 
-    <target name="buildit" depends="clean,jar,copyothers,ubuntuPackage">
+    <target name="buildit" depends="clean,jar,copyothers">
     	<!-- Final cleanup -->
     	<delete dir="${classes.dir}"/>
 	</target>

@@ -135,7 +135,7 @@ public class OSUtil
 	{
 		// TODO: this way of finding the dir is JAR name dependent - tricky, may not work
 		// if program is repackaged as different JAR!
-		final String JAR_NAME = "BitcoinZWallet.jar";
+		final String JAR_NAME = "ZCLWallet.jar";
 		String cp = System.getProperty("java.class.path");
 		if ((cp != null) && (cp.indexOf(File.pathSeparator) == -1) &&
 			(cp.endsWith(JAR_NAME)))
@@ -180,13 +180,13 @@ public class OSUtil
 		
 		if (os == OS_TYPE.MAC_OS)
 		{
-			return new File(System.getProperty("user.home") + "/Library/Application Support/BitcoinZ").getCanonicalPath();
+			return new File(System.getProperty("user.home") + "/Library/Application Support/ZCL").getCanonicalPath();
 		} else if (os == OS_TYPE.WINDOWS)
 		{
-			return new File(System.getenv("APPDATA") + "\\BitcoinZ").getCanonicalPath();
+			return new File(System.getenv("APPDATA") + "\\Zclassic").getCanonicalPath();
 		} else
 		{
-			return new File(System.getProperty("user.home") + "/.bitcoinz").getCanonicalPath();
+			return new File(System.getProperty("user.home") + "/.zclassic").getCanonicalPath();
 		}
 	}
 
@@ -201,13 +201,13 @@ public class OSUtil
 	    
 	    if (os == OS_TYPE.MAC_OS)
 	    {
-	        dir = new File(userHome, "Library/Application Support/BitcoinZWallet");
+	        dir = new File(userHome, "Library/Application Support/ZCLWallet");
 	    } else if (os == OS_TYPE.WINDOWS)
 		{
-			dir = new File(System.getenv("LOCALAPPDATA") + "\\BitcoinZWallet");
+			dir = new File(System.getenv("LOCALAPPDATA") + "\\ZCLWallet");
 		} else
 	    {
-	        dir = new File(userHome.getCanonicalPath() + File.separator + ".BitcoinZWallet");
+	        dir = new File(userHome.getCanonicalPath() + File.separator + ".ZCLWallet");
 	    }
 	    
 		if (!dir.exists())
@@ -250,7 +250,7 @@ public class OSUtil
 	    File f;
 	    
 	    // Try with system property zcash.location.dir - may be specified by caller
-	    String ZCashLocationDir = System.getProperty("bitcoinz.location.dir");
+	    String ZCashLocationDir = System.getProperty("zcl.location.dir");
 	    if ((ZCashLocationDir != null) && (ZCashLocationDir.trim().length() > 0))
 	    {
 	        f = new File(ZCashLocationDir + File.separator + command);
@@ -295,7 +295,7 @@ public class OSUtil
 	    		File pf = new File(programFiles);
 	    		if (pf.exists() && pf.isDirectory())
 	    		{
-	    			File ZDir = new File(pf, "BitcoinZ");
+	    			File ZDir = new File(pf, "ZCL");
 	    			if (ZDir.exists() && ZDir.isDirectory())
 	    			{
 	    				File cf = new File(ZDir, command);

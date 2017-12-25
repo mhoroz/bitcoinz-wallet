@@ -75,7 +75,7 @@ public class ZCashInstallationObserver
 		if (!dir.exists() || dir.isFile())
 		{
 			throw new InstallationDetectionException(
-				"The BitcoinZ installation directory " + installDir + " does not exist or is not " +
+				"The ZCL installation directory " + installDir + " does not exist or is not " +
 			    "a directory or is otherwise inaccessible to the wallet!");
 		}
 
@@ -88,16 +88,16 @@ public class ZCashInstallationObserver
 			zcashcli = OSUtil.findZCashCommand(OSUtil.getZCashCli());
 		}
 
-		Log.info("Using BitcoinZ utilities: " +
+		Log.info("Using ZCL utilities: " +
 		                   "zcashd: "    + ((zcashd != null) ? zcashd.getCanonicalPath() : "<MISSING>") + ", " +
 		                   "zcash-cli: " + ((zcashcli != null) ? zcashcli.getCanonicalPath() : "<MISSING>"));
 
 		if ((zcashd == null) || (zcashcli == null) || (!zcashd.exists()) || (!zcashcli.exists()))
 		{
 			throw new InstallationDetectionException(
-				"The BitcoinZ GUI Wallet installation directory " + installDir + " needs\nto contain " +
+				"The ZCL Wallet installation directory " + installDir + " needs\nto contain " +
 				"the command line utilities zcashd and zcash-cli. At least one of them is missing! \n" +
-				"Please place files BitcoinZWallet.jar, " + OSUtil.getZCashCli() + ", " +
+				"Please place files ZCLWallet.jar, " + OSUtil.getZCashCli() + ", " +
 				OSUtil.getZCashd() + " in the same directory.");
 		}
 	}
@@ -285,7 +285,7 @@ public class ZCashInstallationObserver
 		}
 		
 		String blockChainDir = OSUtil.getBlockchainDirectory();
-		File zenConf = new File(blockChainDir + File.separator + "bitcoinz.conf");
+		File zenConf = new File(blockChainDir + File.separator + "zclassic.conf");
 		if (zenConf.exists())
 		{
 			Properties confProps = new Properties();

@@ -1,0 +1,18 @@
+Format: 1.8
+Date: Mon, 25 Dec 2017 23:05:46 +0100
+Source: zcl-wallet
+Binary: zcl-wallet
+Architecture: all
+Version: 1.1.0
+Distribution: unknown
+Urgency: low
+Description:
+ zcl-wallet - ZCL Wallet
+Changes:
+ zcl-wallet (1.1.0) unknown; urgency=low
+Checksums-Sha1:
+ ca3cb103dd8054dc1b3a80628be0790206200865 283870 zcl-wallet_1.1.0.deb
+Checksums-Sha256:
+ 6f88ec92239da2b0700f06a3ec5bc746c8187be1b040f1eaa491ce8eb8bc93c1 283870 zcl-wallet_1.1.0.deb
+Files:
+ 2ff436e6288ef33012e9f12c54f8f7a5 283870 misc low zcl-wallet_1.1.0.deb
