@@ -106,11 +106,11 @@ public class ZCashUI
     public ZCashUI(StartupProgressDialog progressDialog)
         throws IOException, InterruptedException, WalletCallException
     {
-        super("ZCL Wallet 1.1.0.3 by BitcoinZ team");
+        super("ZCL Windows Wallet 1.1.0.3 by BitcoinZ team");
         
         if (progressDialog != null)
         {
-        	progressDialog.setProgressText("Starting ZCL Wallet by BitcoinZ team...");
+        	progressDialog.setProgressText("Starting ZCL Windows Wallet by BitcoinZ team...");
         }
         
         ClassLoader cl = this.getClass().getClassLoader();
@@ -481,7 +481,7 @@ public class ZCashUI
         		possiblyCreateZENConfigFile();
         	}
         	
-        	Log.info("Starting ZCL Wallet ...");
+        	Log.info("Starting ZCL Windows Wallet...");
         	Log.info("OS: " + System.getProperty("os.name") + " = " + os);
         	Log.info("Current directory: " + new File(".").getCanonicalPath());
         	Log.info("Class path: " + System.getProperty("java.class.path"));

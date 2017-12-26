@@ -95,7 +95,7 @@ public class ZCashInstallationObserver
 		if ((zcashd == null) || (zcashcli == null) || (!zcashd.exists()) || (!zcashcli.exists()))
 		{
 			throw new InstallationDetectionException(
-				"The ZCL Wallet installation directory " + installDir + " needs\nto contain " +
+				"The ZCL Windows Wallet installation directory " + installDir + " needs\nto contain " +
 				"the command line utilities zcashd and zcash-cli. At least one of them is missing! \n" +
 				"Please place files ZCLWallet.jar, " + OSUtil.getZCashCli() + ", " +
 				OSUtil.getZCashd() + " in the same directory.");

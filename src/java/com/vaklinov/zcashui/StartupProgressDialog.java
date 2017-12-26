@@ -62,7 +62,7 @@ public class StartupProgressDialog extends JFrame {
         contentPane.add(imageLabel, BorderLayout.NORTH);
 		JLabel zcashWalletLabel = new JLabel(
 			"<html><center><span style=\"font-style:italic;font-weight:bold;font-size:2.2em\">" +
-		    "ZCL Wallet<br/>by BitcoinZ team</span></center></html>");
+		    "ZCL Windows Wallet<br/>by BitcoinZ team</span></center></html>");
 		zcashWalletLabel.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
 		// todo - place in a panel with flow center
 		JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 1, 1));
