@@ -402,6 +402,14 @@ public class ZCashClientCaller
         return null;
 	}
 	
+    
+	public synchronized void keypoolRefill(int count)
+		throws WalletCallException, IOException, InterruptedException
+	{
+		String result = this.executeCommandAndGetSingleStringResponse(
+			"keypoolrefill", String.valueOf(count));
+	}
+    
 	
 	public synchronized String getRawTransaction(String txID)
 		throws WalletCallException, IOException, InterruptedException
@@ -431,6 +439,21 @@ public class ZCashClientCaller
 			"gettransaction", wrapStringParameter(txID));
 
 		return jsonTransaction.get("confirmations").toString();
+	}
+	
+	
+	// Checks if a certain T address is a watch-only address or is otherwise invalid.
+	public synchronized boolean isWatchOnlyOrInvalidAddress(String address)
+		throws WalletCallException, IOException, InterruptedException
+	{
+		JsonObject response = this.executeCommandAndGetJsonValue("validateaddress", wrapStringParameter(address)).asObject();
+
+		if (response.getBoolean("isvalid", false))
+		{
+			return response.getBoolean("iswatchonly", true);
+		}
+		
+		return true;
 	}
 	
 
@@ -693,6 +716,28 @@ public class ZCashClientCaller
 			throw new WalletCallException("Unexpected final operation status response from wallet: " + response.toString());
 		}
 	}
+	
+	
+	public synchronized String getSuccessfulOperationTXID(String opID)
+        throws WalletCallException, IOException, InterruptedException
+	{
+		String TXID = null;
+		JsonArray response = this.executeCommandAndGetJsonArray(
+			"z_getoperationstatus", wrapStringParameter("[\"" + opID + "\"]"));
+		JsonObject jsonStatus = response.get(0).asObject();
+		JsonValue  opResultValue = jsonStatus.get("result"); 
+		
+		if (opResultValue != null)
+		{
+			JsonObject opResult = opResultValue.asObject();
+			if (opResult.get("txid") != null)
+			{
+				TXID = opResult.get("txid").asString();
+			}
+		}
+		
+		return TXID;
+	}
 
 
 	// May only be called for already failed operations
@@ -885,21 +930,29 @@ public class ZCashClientCaller
 	
 	
 	// Imports a private key - tries both possibilities T/Z
-	public synchronized void importPrivateKey(String key)
+	public synchronized String importPrivateKey(String key)
 		throws WalletCallException, IOException, InterruptedException
 	{
 		// First try a Z key
-		String[] params = new String[] { this.zcashcli.getCanonicalPath(), "z_importkey", wrapStringParameter(key) };
+		String[] params = new String[] 
+		{ 
+			this.zcashcli.getCanonicalPath(),
+			"-rpcclienttimeout=5000",
+			"z_importkey", 
+			wrapStringParameter(key) 
+		};
 		CommandExecutor caller = new CommandExecutor(params);
     	String strResult = caller.execute();
 		
-		if ((strResult == null) || (strResult.trim().length() <= 0))
+		if (Util.stringIsEmpty(strResult) || 
+			(!strResult.trim().toLowerCase(Locale.ROOT).contains("error")))
 		{
-			return;
+			return strResult == null ? "" : strResult.trim();
 		}
 		
 		// Obviously we have an error trying to import a Z key
-		if (strResult.trim().toLowerCase(Locale.ROOT).startsWith("error:"))
+		if (strResult.trim().toLowerCase(Locale.ROOT).startsWith("error") &&
+			(strResult.indexOf("{") != -1))
 		{
    		 	 // Expecting an error of a T address key
    		 	 String jsonPart = strResult.substring(strResult.indexOf("{"));
@@ -938,11 +991,13 @@ public class ZCashClientCaller
 		}
 		
 		// Second try a T key
-		strResult = this.executeCommandAndGetSingleStringResponse("importprivkey", wrapStringParameter(key));
+		strResult = this.executeCommandAndGetSingleStringResponse(
+			"-rpcclienttimeout=5000", "importprivkey", wrapStringParameter(key));
 		
-		if ((strResult == null) || (strResult.trim().length() <= 0))
+		if (Util.stringIsEmpty(strResult) || 
+			(!strResult.trim().toLowerCase(Locale.ROOT).contains("error")))
 		{
-			return;
+			return strResult == null ? "" : strResult.trim();
 		}
 		
 		// Obviously an error
@@ -1067,7 +1122,7 @@ public class ZCashClientCaller
 	
 	
 	// Used to wrap string parameters on the command line - not doing so causes problems on Windows.
-	private String wrapStringParameter(String param)
+	public static String wrapStringParameter(String param)
 	{
 		OS_TYPE os = OSUtil.getOSType();
 		

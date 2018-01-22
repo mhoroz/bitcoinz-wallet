@@ -28,20 +28,14 @@
  **********************************************************************************/
 package com.vaklinov.zcashui;
 
-import java.awt.Cursor;
-import java.awt.Toolkit;
+import com.vaklinov.zcashui.ZCashClientCaller.WalletCallException;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.io.IOException;
-
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JTabbedPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
-import com.vaklinov.zcashui.ZCashClientCaller.WalletCallException;
 
 
 /**
@@ -60,6 +54,7 @@ public class WalletOperations
 	private ZCashInstallationObserver installationObserver;
 	private ZCashClientCaller         clientCaller;
 	private StatusUpdateErrorReporter errorReporter;
+	private BackupTracker             backupTracker;
 
 
 	public WalletOperations(ZCashUI parent,
@@ -70,7 +65,8 @@ public class WalletOperations
 			                
 			                ZCashInstallationObserver installationObserver, 
 			                ZCashClientCaller clientCaller,
-			                StatusUpdateErrorReporter errorReporter) 
+			                StatusUpdateErrorReporter errorReporter,
+			                BackupTracker             backupTracker) 
         throws IOException, InterruptedException, WalletCallException 
 	{
 		this.parent    = parent;
@@ -82,6 +78,8 @@ public class WalletOperations
 		this.installationObserver = installationObserver;
 		this.clientCaller = clientCaller;
 		this.errorReporter = errorReporter;
+		
+		this.backupTracker = backupTracker;
 	}
 
 	
@@ -181,6 +179,8 @@ public class WalletOperations
 							
 				path = this.clientCaller.backupWallet(f.getName());
 				
+				this.backupTracker.handleBackup();
+				
 				this.parent.setCursor(oldCursor);
 			} catch (WalletCallException wce)
 			{
@@ -238,6 +238,7 @@ public class WalletOperations
 				this.parent.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 							
 				path = this.clientCaller.exportWallet(f.getName());
+				this.backupTracker.handleBackup();
 				
 				this.parent.setCursor(oldCursor);
 			} catch (WalletCallException wce)
@@ -420,22 +421,18 @@ public class WalletOperations
 			this.errorReporter.reportError(ex, false);
 		}
 	}
-	
-	
+
 	private void issueBackupDirectoryWarning()
 		throws IOException
 	{
         String userDir = OSUtil.getSettingsDirectory();
-        File warningFlagFile = new File(userDir + File.separator + "backupInfoShown.flag");
+        File warningFlagFile = new File(userDir + File.separator + "backupInfoShownNG.flag");
         if (warningFlagFile.exists())
         {
             return;
-        } else
-        {
-            warningFlagFile.createNewFile();
-        }
-        
-        JOptionPane.showMessageDialog(
+        } 
+            
+        int reply = JOptionPane.showOptionDialog(
             this.parent,
             "For security reasons the wallet may be backed up/private keys exported only if\n" +
             "the zcashd parameter -exportdir=<dir> has been set. If you started zcashd \n" +
@@ -447,8 +444,18 @@ public class WalletOperations
             "instead, the destination file will still end up in the directory provided as \n" +
             "-exportdir=<dir>. If this parameter was not provided to zcashd, the process\n" +
             "will fail with a security check error. The filename needs to consist of only\n" + 
-            "alphanumeric characters (e.g. dot is not allowed).\n\n" +
-            "(This message will be shown only once)",
-            "Wallet backup directory information", JOptionPane.INFORMATION_MESSAGE);
+            "alphanumeric characters (e.g. dot is not allowed).\n",
+            "Wallet backup directory information", 
+	        JOptionPane.YES_NO_OPTION,
+	        JOptionPane.INFORMATION_MESSAGE, 
+	        null, new String[] { "Do not show this again", "OK" }, 
+	        JOptionPane.NO_OPTION);
+	        
+	    if (reply == JOptionPane.NO_OPTION) 
+	    {
+	    	return;
+	    }
+	    
+	    warningFlagFile.createNewFile();
 	}
 }

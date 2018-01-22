@@ -36,7 +36,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
@@ -62,6 +64,7 @@ import com.vaklinov.zcashui.ZCashClientCaller.WalletCallException;
 public class AddressesPanel
 	extends WalletTabPanel
 {
+	private JFrame parentFrame;
 	private ZCashClientCaller clientCaller;
 	private StatusUpdateErrorReporter errorReporter;
 
@@ -74,10 +77,15 @@ public class AddressesPanel
 	
 	private long lastInteractiveRefresh;
 	
+	// Table of validated addresses with their validation result. An invalid or watch-only address should not be shown
+	// and should be remembered as invalid here
+	private Map<String, Boolean> validationMap = new HashMap<String, Boolean>();
+	
 
-	public AddressesPanel(ZCashClientCaller clientCaller, StatusUpdateErrorReporter errorReporter)
+	public AddressesPanel(JFrame parentFrame, ZCashClientCaller clientCaller, StatusUpdateErrorReporter errorReporter)
 		throws IOException, InterruptedException, WalletCallException
 	{
+		this.parentFrame = parentFrame;
 		this.clientCaller = clientCaller;
 		this.errorReporter = errorReporter;
 		
@@ -103,13 +111,12 @@ public class AddressesPanel
 		
 		addressesPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-		// Table of transactions
+		// Table of addresses
 		lastAddressBalanceData = getAddressBalanceDataFromWallet();
 		addressesPanel.add(addressBalanceTablePane = new JScrollPane(
 				               addressBalanceTable = this.createAddressBalanceTable(lastAddressBalanceData)),
 				           BorderLayout.CENTER);
-		
-		
+				
 		JPanel warningPanel = new JPanel();
 		warningPanel.setLayout(new BorderLayout(3, 3));
 		warningPanel.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
@@ -249,11 +256,21 @@ public class AddressesPanel
 			{
 				this.clientCaller.lockWallet();
 			}
-						
+			
+			String backupMessage = "";
+			if (isZAddress)
+			{
+				backupMessage = 
+				"\n\nIt is necessary to back up the wallet after creating a new Z address. The wallet needs\n" +
+				"to be backed up to a safe location that can survive any data loss on the PC where the wallet\n" +
+				"is currenly located. Not backing up the wallet may result in loss of funds in case of data\n" +
+				"loss on the current PC. To backup the wallet, use menu option: Wallet >> Backup\n";
+			}			
+			
 			JOptionPane.showMessageDialog(
 				this.getRootPane().getParent(), 
 				"A new " + (isZAddress ? "Z (Private)" : "T (Transparent)") 
-				+ " address has been created cuccessfully:\n" + address, 
+				+ " address has been created cuccessfully:\n" + address + backupMessage, 
 				"Address created", JOptionPane.INFORMATION_MESSAGE);
 			
 			this.updateWalletAddressBalanceTableInteractive();
@@ -376,6 +393,35 @@ public class AddressesPanel
 
 		for (String address : tAddressesCombined)
 		{
+			String addressToDisplay = address;
+			// Make sure the current address is not watch-only or invalid
+			if (!this.validationMap.containsKey(address))
+			{
+				boolean validationResult = this.clientCaller.isWatchOnlyOrInvalidAddress(address);
+				this.validationMap.put(address, new Boolean(validationResult));	
+				
+				if (validationResult)
+				{
+		            JOptionPane.showMessageDialog(
+		                this.parentFrame,
+		                "An invalid or watch-only address exists in the wallet:" + "\n" +
+		                address + "\n\n" +
+		                "The GUI wallet software cannot operate properly with addresses that are invalid or\n" +
+		                "exist in the wallet as watch-only addresses. Do NOT use this address as a destination\n" +
+		                "address for payment operations!",
+		                "Error: invalid or watch-only address exists!",
+		                JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			
+			boolean watchOnlyOrInvalid = this.validationMap.get(address).booleanValue();
+			if (watchOnlyOrInvalid)
+			{
+				Log.error("The following address is invalid or a watch-only address: {0}. It will not be displayed!", address);
+				addressToDisplay = "<INVALID OR WATCH-ONLY ADDRESS> !!!";
+			}
+			// End of check for invalid/watch only addresses
+			
 			String confirmedBalance = this.clientCaller.getBalanceForAddress(address);
 			String unconfirmedBalance = this.clientCaller.getUnconfirmedBalanceForAddress(address);
 			boolean isConfirmed =  (confirmedBalance.equals(unconfirmedBalance));			
@@ -386,7 +432,7 @@ public class AddressesPanel
 			{  
 				balanceToShow,
 				isConfirmed ? ("Yes " + confirmed) : ("No  " + notConfirmed),
-				address
+				addressToDisplay
 			};
 		}
 		

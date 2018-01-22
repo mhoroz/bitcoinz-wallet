@@ -127,7 +127,7 @@ public class TransactionTable
 						
 						Log.info("Transaction ID for block explorer is: " + txID);
 						// https://explorer.zcha.in/transactions/<ID>
-						String urlPrefix = "https://btzexplorer.blockhub.info/tx/";
+						String urlPrefix = "https://explorer.mybtczwallet.org/tx/";
 						if (installationObserver.isOnTestNet())
 						{
 							urlPrefix = "https://na";
@@ -193,6 +193,7 @@ public class TransactionTable
  							Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
  							clipboard.setContents(new StringSelection(MemoField), null);
  							
+ 							MemoField = Util.blockWrapString(MemoField, 80);
  							JOptionPane.showMessageDialog(
  								parent, 
  								"The memo contained in the transaction is: \n" + MemoField +

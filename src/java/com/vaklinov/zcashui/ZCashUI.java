@@ -82,7 +82,7 @@ public class ZCashUI
 
     private JMenuItem menuItemExit;
     private JMenuItem menuItemAbout;
-    private JMenuItem menuItemEncrypt;
+    //private JMenuItem menuItemEncrypt;
     private JMenuItem menuItemBackup;
     private JMenuItem menuItemExportKeys;
     private JMenuItem menuItemImportKeys;
@@ -91,8 +91,10 @@ public class ZCashUI
     private JMenuItem menuItemOwnIdentity;
     private JMenuItem menuItemExportOwnIdentity;
     private JMenuItem menuItemImportContactIdentity;
+    private JMenuItem menuItemAddMessagingGroup;
     private JMenuItem menuItemRemoveContactIdentity;
     private JMenuItem menuItemMessagingOptions;
+    private JMenuItem menuItemShareFileViaIPFS;
 
     private DashboardPanel   dashboard;
     private AddressesPanel   addresses;
@@ -106,7 +108,7 @@ public class ZCashUI
     public ZCashUI(StartupProgressDialog progressDialog)
         throws IOException, InterruptedException, WalletCallException
     {
-        super("BitcoinZ Wallet 1.1.0_1.3");
+        super("BitcoinZ Wallet 1.1.0.4");
         
         if (progressDialog != null)
         {
@@ -133,15 +135,18 @@ public class ZCashUI
         Font oldTabFont = tabs.getFont();
         Font newTabFont  = new Font(oldTabFont.getName(), Font.BOLD | Font.ITALIC, oldTabFont.getSize() * 57 / 50);
         tabs.setFont(newTabFont);
+        BackupTracker backupTracker = new BackupTracker(this);
+
         tabs.addTab("Overview ",
         		    new ImageIcon(cl.getResource("images/overview.png")),
-        		    dashboard = new DashboardPanel(this, installationObserver, clientCaller, errorReporter));
+        		    dashboard = new DashboardPanel(this, installationObserver, clientCaller,
+        		    		                       errorReporter, backupTracker));
         tabs.addTab("Own addresses ",
         		    new ImageIcon(cl.getResource("images/own-addresses.png")),
-        		    addresses = new AddressesPanel(clientCaller, errorReporter));
+        		    addresses = new AddressesPanel(this, clientCaller, errorReporter));
         tabs.addTab("Send cash ",
         		    new ImageIcon(cl.getResource("images/send.png")),
-        		    sendPanel = new SendCashPanel(clientCaller, errorReporter));
+        		    sendPanel = new SendCashPanel(clientCaller, errorReporter, installationObserver, backupTracker));
         tabs.addTab("Address book ",
     		        new ImageIcon(cl.getResource("images/address-book.png")),
     		        addressBookPanel = new AddressBookPanel(sendPanel, tabs));
@@ -151,7 +156,8 @@ public class ZCashUI
         contentPane.add(tabs);
 
         this.walletOps = new WalletOperations(
-            	this, tabs, dashboard, addresses, sendPanel, installationObserver, clientCaller, errorReporter);
+            	this, tabs, dashboard, addresses, sendPanel,
+            	installationObserver, clientCaller, errorReporter, backupTracker);
 
         int width = 1024;
 
@@ -180,8 +186,8 @@ public class ZCashUI
         wallet.setMnemonic(KeyEvent.VK_W);
         wallet.add(menuItemBackup = new JMenuItem("Backup...", KeyEvent.VK_B));
         menuItemBackup.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B, accelaratorKeyMask));
-        wallet.add(menuItemEncrypt = new JMenuItem("Encrypt...", KeyEvent.VK_E));
-        menuItemEncrypt.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, accelaratorKeyMask));
+        //wallet.add(menuItemEncrypt = new JMenuItem("Encrypt...", KeyEvent.VK_E));
+        //menuItemEncrypt.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, accelaratorKeyMask));
         wallet.add(menuItemExportKeys = new JMenuItem("Export private keys...", KeyEvent.VK_K));
         menuItemExportKeys.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, accelaratorKeyMask));
         wallet.add(menuItemImportKeys = new JMenuItem("Import private keys...", KeyEvent.VK_I));
@@ -201,6 +207,8 @@ public class ZCashUI
         menuItemOwnIdentity.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, accelaratorKeyMask));        
         messaging.add(menuItemExportOwnIdentity = new JMenuItem("Export own identity...", KeyEvent.VK_X));
         menuItemExportOwnIdentity.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, accelaratorKeyMask));        
+        messaging.add(menuItemAddMessagingGroup = new JMenuItem("Add messaging group...", KeyEvent.VK_G));
+        menuItemAddMessagingGroup.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, accelaratorKeyMask));
         messaging.add(menuItemImportContactIdentity = new JMenuItem("Import contact identity...", KeyEvent.VK_Y));
         menuItemImportContactIdentity.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, accelaratorKeyMask));
         messaging.add(menuItemRemoveContactIdentity = new JMenuItem("Remove contact...", KeyEvent.VK_R));
@@ -208,10 +216,17 @@ public class ZCashUI
         messaging.add(menuItemMessagingOptions = new JMenuItem("Options...", KeyEvent.VK_O));
         menuItemMessagingOptions.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, accelaratorKeyMask));
         
+        JMenu shareFileVia = new JMenu("Share file via:");
+        shareFileVia.setMnemonic(KeyEvent.VK_V);
+        // TODO: uncomment this for IPFS integration
+        //messaging.add(shareFileVia);
+        shareFileVia.add(menuItemShareFileViaIPFS = new JMenuItem("IPFS", KeyEvent.VK_F));
+        menuItemShareFileViaIPFS.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, accelaratorKeyMask));
+
         mb.add(messaging);
 
         // TODO: Temporarily disable encryption until further notice - Oct 24 2016
-        menuItemEncrypt.setEnabled(false);
+        //menuItemEncrypt.setEnabled(false);
                         
         this.setJMenuBar(mb);
 
@@ -257,16 +272,16 @@ public class ZCashUI
             }
         );
         
-        menuItemEncrypt.addActionListener(
-            new ActionListener()
-            {
-                @Override
-                public void actionPerformed(ActionEvent e)
-                {
-                    ZCashUI.this.walletOps.encryptWallet();
-                }
-            }
-        );
+//        menuItemEncrypt.addActionListener(
+//            new ActionListener()
+//            {
+//                @Override
+//                public void actionPerformed(ActionEvent e)
+//                {
+//                    ZCashUI.this.walletOps.encryptWallet();
+//                }
+//            }
+//        );
 
         menuItemExportKeys.addActionListener(   
             new ActionListener()
@@ -353,7 +368,18 @@ public class ZCashUI
                    }
                }
         );
-       
+
+       menuItemAddMessagingGroup.addActionListener(
+               new ActionListener()
+               {
+                   @Override
+                   public void actionPerformed(ActionEvent e)
+                   {
+            			ZCashUI.this.messagingPanel.addMessagingGroup();
+                   }
+               }
+        );
+
        menuItemRemoveContactIdentity.addActionListener(
                new ActionListener()
                {
@@ -363,9 +389,7 @@ public class ZCashUI
             			ZCashUI.this.messagingPanel.removeSelectedContact();
                    }
                }
-        );
-
-       menuItemMessagingOptions.addActionListener(
+        );menuItemMessagingOptions.addActionListener(
                new ActionListener()
                {
                    @Override
@@ -374,9 +398,19 @@ public class ZCashUI
             			ZCashUI.this.messagingPanel.openOptionsDialog();
                    }
                }
-        );
+       );
 
-       
+       menuItemShareFileViaIPFS.addActionListener(
+               new ActionListener()
+               {
+                   @Override
+                   public void actionPerformed(ActionEvent e)
+                   {
+            			ZCashUI.this.messagingPanel.shareFileViaIPFS();
+                   }
+               }
+       );
+
         // Close operation
         this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         this.addWindowListener(new WindowAdapter()
@@ -396,7 +430,7 @@ public class ZCashUI
                 try
                 {
                     String userDir = OSUtil.getSettingsDirectory();
-                    File warningFlagFile = new File(userDir + File.separator + "initialInfoShown.flag");
+                    File warningFlagFile = new File(userDir + File.separator + "initialInfoShown_0.75.flag");
                     if (warningFlagFile.exists())
                     {
                         return;
@@ -423,7 +457,7 @@ public class ZCashUI
                     "LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\n" +
                     "OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\n" +
                     "THE SOFTWARE.\n\n" +
-                    "(This message will be shown only once)",
+                    "(This message will be shown only once, per release)",
                     "Disclaimer", JOptionPane.INFORMATION_MESSAGE);
             }
         });
@@ -569,7 +603,7 @@ public class ZCashUI
                 null,
                 "This program was started in directory: " + OSUtil.getProgramDirectory() + "\n" +
                 ide.getMessage() + "\n" +
-                "See the console output for more detailed error information!",
+                "See the console/logfile output for more detailed error information!",
                 "Installation error",
                 JOptionPane.ERROR_MESSAGE);
             System.exit(1);
@@ -595,7 +629,7 @@ public class ZCashUI
                     "Please ensure that the BitcoinZ server zcashd is started (e.g. via \n" +
                     "command  \"zcashd --daemon\"). Error message is: \n" +
                      wce.getMessage() +
-                    "See the console output for more detailed error information!",
+                    "See the console/logfile output for more detailed error information!",
                     "Wallet communication error",
                     JOptionPane.ERROR_MESSAGE);
             }
@@ -607,7 +641,7 @@ public class ZCashUI
             JOptionPane.showMessageDialog(
                 null,
                 "A general unexpected critical error has occurred: \n" + e.getMessage() + "\n" +
-                "See the console output for more detailed error information!",
+                "See the console/logfile output for more detailed error information!",
                 "Error",
                 JOptionPane.ERROR_MESSAGE);
             System.exit(3);
@@ -618,7 +652,7 @@ public class ZCashUI
             JOptionPane.showMessageDialog(
                 null,
                 "A general unexpected critical/unrecoverable error has occurred: \n" + err.getMessage() + "\n" +
-                "See the console output for more detailed error information!",
+                "See the console/logfile output for more detailed error information!",
                 "Error",
                 JOptionPane.ERROR_MESSAGE);
             System.exit(4);

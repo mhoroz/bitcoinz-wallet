@@ -32,6 +32,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
@@ -43,6 +44,7 @@ import java.util.Arrays;
 
 import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonObject;
+import org.bitcoinj.core.Base58;
 
 /**
  * Utilities - generally reusable across classes.
@@ -358,6 +360,13 @@ public class Util
 	}
 	
 	
+	/**
+	 * Delets a directory and all of its subdirectories.
+	 * 
+	 * @param dir directory to delete.
+	 * 
+	 * @throws IOException if not successful
+	 */
 	public static void deleteDirectory(File dir)
 		throws IOException
 	{
@@ -381,4 +390,58 @@ public class Util
 		}
 	}
 	
+	
+	/**
+	 * Wraps an input string in a block form with the specified width. LF is used to end each line.
+	 * 
+	 * @param inStr
+	 * @param width
+	 * 
+	 * @return input wrapped
+	 */
+	public static String blockWrapString(String inStr, int width)
+	{
+		StringBuilder block = new StringBuilder();
+		
+		int position = 0;
+		while (position < inStr.length())
+		{
+			int endPosition = Math.min(position + width, inStr.length());
+			block.append(inStr.substring(position, endPosition));
+			block.append("\n");
+			position += width;
+		}
+		
+		return block.toString();
+	}
+	
+	
+	public static byte[] loadFileInMemory(File f)
+		throws IOException
+	{
+		RandomAccessFile oRAF = null;
+		try
+		{
+			oRAF = new RandomAccessFile(f, "r");
+			
+			byte bytes[] = new byte[(int)oRAF.length()];
+			oRAF.readFully(bytes);
+			
+			return bytes;
+		} finally
+		{
+			if (oRAF != null)
+			{
+				oRAF.close();
+			}
+		}
+	}
+
+	public static String wifToHex(String wifKey) throws Exception {
+			byte[] bytes = Base58.decode(wifKey);
+			String pk = Util.encodeHexArray(bytes);
+			pk = pk.substring(2, pk.length() - 10);
+			return pk;
+	}
+
 }

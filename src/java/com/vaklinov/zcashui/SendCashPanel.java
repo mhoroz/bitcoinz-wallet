@@ -30,6 +30,7 @@ package com.vaklinov.zcashui;
 
 
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -42,10 +43,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.swing.BorderFactory;
@@ -59,7 +61,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
@@ -76,9 +77,11 @@ import com.vaklinov.zcashui.ZCashClientCaller.WalletCallException;
 public class SendCashPanel
 	extends WalletTabPanel
 {
-	private ZCashClientCaller clientCaller;
+	private ZCashClientCaller         clientCaller;
 	private StatusUpdateErrorReporter errorReporter;
-	
+	private ZCashInstallationObserver installationObserver;
+	private BackupTracker             backupTracker;
+
 	private JComboBox  balanceAddressCombo     = null;
 	private JPanel     comboBoxParentPanel     = null;
 	private String[][] lastAddressBalanceData  = null;
@@ -100,7 +103,10 @@ public class SendCashPanel
 	private int          operationStatusCounter      = 0;
 	
 
-	public SendCashPanel(ZCashClientCaller clientCaller,  StatusUpdateErrorReporter errorReporter)
+	public SendCashPanel(ZCashClientCaller clientCaller,
+			             StatusUpdateErrorReporter errorReporter,
+			             ZCashInstallationObserver installationObserver,
+			             BackupTracker backupTracker)
 		throws IOException, InterruptedException, WalletCallException
 	{
 		this.timers = new ArrayList<Timer>();
@@ -108,6 +114,8 @@ public class SendCashPanel
 		
 		this.clientCaller = clientCaller;
 		this.errorReporter = errorReporter;
+		this.installationObserver = installationObserver;
+		this.backupTracker = backupTracker;
 
 		// Build content
 		this.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
@@ -203,8 +211,8 @@ public class SendCashPanel
 		warningPanel.setLayout(new BorderLayout(7, 3));
 		JLabel warningL = new JLabel(
 				"<html><span style=\"font-size:0.8em;\">" +
-				" * When sending cash from a T (Transparent) address, the remining unspent balance is sent to another " +
-				"auto-generated T address. When sending from a Z (Private) address, the remining unspent balance remains with " +
+				" * When sending cash from a T (Transparent) address, the remaining unspent balance is sent to another " +
+				"auto-generated T address. When sending from a Z (Private) address, the remaining unspent balance remains with " +
 				"the Z address. In both cases the original sending address cannot be used for sending again until the " +
 				"transaction is confirmed. The address is temporarily removed from the list! Freshly mined coins may only "+
 				"be sent to a Z (Private) address." +
@@ -410,6 +418,30 @@ public class SendCashPanel
 			errorMessage = "Destination address is invalid; it is too long.";
 		}
 		
+		// Prevent accidental sending to non-ZEN addresses (which zend supports) probably because of
+		// ZClassic compatibility
+		if (!installationObserver.isOnTestNet())
+		{
+			if (!(destinationAddress.startsWith("t") || destinationAddress.startsWith("z")))
+			{
+				Object[] options = { "OK" };
+
+				JOptionPane.showOptionDialog(
+					SendCashPanel.this.getRootPane().getParent(),
+					"The destination address to send BTCZ to:\n" +
+					destinationAddress + "\n"+
+					"does not appear to be a valid BitcoinZ address. BTCZ addresses start with t or z!",
+					"Destination address is incorrect...",
+					JOptionPane.DEFAULT_OPTION,
+					JOptionPane.ERROR_MESSAGE,
+					null,
+					options,
+					options[0]);
+
+			    return; // Do not send anything!
+			}
+		}
+
 		if ((amount == null) || (amount.trim().length() <= 0))
 		{
 			errorMessage = "Amount to send is invalid; it is missing.";
@@ -465,6 +497,12 @@ public class SendCashPanel
 		// Call the wallet send method
 		operationStatusID = this.clientCaller.sendCash(sourceAddress, destinationAddress, amount, memo, fee);
 				
+		// Make sure the keypool has spare addresses
+		if ((this.backupTracker.getNumTransactionsSinceLastBackup() % 5) == 0)
+		{
+			this.clientCaller.keypoolRefill(100);
+		}
+
 		// Disable controls after send
 		sendButton.setEnabled(false);
 		balanceAddressCombo.setEnabled(false);
@@ -508,31 +546,8 @@ public class SendCashPanel
 						// End the special thread used to follow the operation
 						opFollowingThread.setSuspended(true);
 						
-						if (clientCaller.isCompletedOperationSuccessful(operationStatusID))
-						{
-							operationStatusLabel.setText(
-								"<html><span style=\"color:green;font-weight:bold\">SUCCESSFUL</span></html>");
-							JOptionPane.showMessageDialog(
-									SendCashPanel.this.getRootPane().getParent(), 
-									"Succesfully sent " + amount + " BTCZ from address: \n" +
-									sourceAddress + "\n" +
-									"to address: \n" +
-									destinationAddress + "\n", 
-									"Cash sent successfully", JOptionPane.INFORMATION_MESSAGE);
-						} else
-						{
-							String errorMessage = clientCaller.getOperationFinalErrorMessage(operationStatusID); 
-							operationStatusLabel.setText(
-								"<html><span style=\"color:red;font-weight:bold\">ERROR: " + errorMessage + "</span></html>");
-
-							JOptionPane.showMessageDialog(
-									SendCashPanel.this.getRootPane().getParent(), 
-									"An error occurred when sending cash. Error message is:\n" +
-									errorMessage + "\n\n" +
-									"Please ensure that sending parameters are correct. You may try again later...\n", 
-									"Error in sending cash", JOptionPane.ERROR_MESSAGE);
-
-						}
+						SendCashPanel.this.reportCompleteOperationToTheUser(
+							amount, sourceAddress, destinationAddress);
 						
 						// Lock the wallet again 
 						if (bEncryptedWallet)
@@ -691,4 +706,64 @@ public class SendCashPanel
 	}
 	
 	
+	private void reportCompleteOperationToTheUser(String amount, String sourceAddress, String destinationAddress)
+		throws InterruptedException, WalletCallException, IOException, URISyntaxException
+	{
+		if (clientCaller.isCompletedOperationSuccessful(operationStatusID))
+		{
+			operationStatusLabel.setText(
+				"<html><span style=\"color:green;font-weight:bold\">SUCCESSFUL</span></html>");
+			String TXID = clientCaller.getSuccessfulOperationTXID(operationStatusID);
+
+			Object[] options = { "OK", "Copy transaction ID", "View on the blockchain" };
+
+			int option = JOptionPane.showOptionDialog(
+				SendCashPanel.this.getRootPane().getParent(),
+				"Succesfully sent " + amount + " BTCZ from address: \n" +
+				sourceAddress + "\n" +
+				"to address: \n" +
+				destinationAddress + "\n\n" +
+				"Transaction ID: " + TXID,
+				"Cash sent successfully",
+				JOptionPane.DEFAULT_OPTION,
+				JOptionPane.INFORMATION_MESSAGE,
+				null,
+				options,
+				options[0]);
+
+		    if (option == 1)
+		    {
+		    	// Copy the transaction ID to clipboard
+		    	Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+				clipboard.setContents(new StringSelection(TXID), null);
+		    } else if (option == 2)
+		    {
+		    	// Open block explorer
+				Log.info("Transaction ID for block explorer is: " + TXID);
+				// TODO: code duplication with transactions table
+				String urlPrefix = "https://explorer.mybtczwallet.org/tx/";
+				if (installationObserver.isOnTestNet())
+				{
+					urlPrefix = "https://explorer-testnet.zen-solutions.io/tx/";
+				}
+				Desktop.getDesktop().browse(new URL(urlPrefix + TXID).toURI());
+		    }
+
+		    // Call the backup tracker - to remind the user
+		    this.backupTracker.handleNewTransaction();
+		} else
+		{
+			String errorMessage = clientCaller.getOperationFinalErrorMessage(operationStatusID);
+			operationStatusLabel.setText(
+				"<html><span style=\"color:red;font-weight:bold\">ERROR: " + errorMessage + "</span></html>");
+
+			JOptionPane.showMessageDialog(
+					SendCashPanel.this.getRootPane().getParent(),
+					"An error occurred when sending cash. Error message is:\n" +
+					errorMessage + "\n\n" +
+					"Please ensure that sending parameters are correct. You may try again later...\n",
+					"Error in sending cash", JOptionPane.ERROR_MESSAGE);
+
+		}
+	}
 }

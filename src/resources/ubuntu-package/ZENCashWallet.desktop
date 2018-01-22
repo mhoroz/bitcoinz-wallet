@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=BitcoinZ Wallet
+Comment=BitcoinZ Desktop GUI Wallet (full node)
+GenericName=BitcoinZ Wallet
+Keywords=BitcoinZ;Crypto-currency;BTCZ;
+Exec=zencash-desktop-gui-wallet
+Terminal=false
+X-MultipleArgs=false
+Type=Application
+Icon=/usr/lib/zencash-gui-wallet/ZEN-icon.png
+Categories=GNOME;Application;
+StartupNotify=true

@@ -3,6 +3,11 @@
 This is a [ZENCash](https://zensystem.io/) Desktop GUI Wallet made available through a package repository
 for Debian/Ubuntu (and similar) Linux systems.
 
+<<<<<<< HEAD
+=======
+### IMPORTANT: Please read the [security notice](KnownSecurityIssues.md) about watch-only addresses before using the wallet!
+
+>>>>>>> 3dfd3f9b47e1848076a50850adc7533d594cca76
 ![Screenshot](ZENCashWalletUbuntu.png "Main Window")
 
 ### Installing the ZENCash Desktop GUI Wallet on Linux
@@ -33,7 +38,14 @@ zen-fetch-params
    
 ### Running the ZENCash Desktop GUI Wallet on Linux
 
+<<<<<<< HEAD
 To run the desktop GUI wallet, run the command `zencash-desktop-gui-wallet` from a terminal:
+=======
+To launch the ZENCash Desktop GUI Wallet you can just search and click on it in the Ubuntu unity menu:
+![UnityLauncher](ZENUnityLauncher.png "ZENCash Wallet launcher")
+
+...or alternatively, run the command `zencash-desktop-gui-wallet` from a terminal:
+>>>>>>> 3dfd3f9b47e1848076a50850adc7533d594cca76
 ```
 zencash-desktop-gui-wallet
 ```
