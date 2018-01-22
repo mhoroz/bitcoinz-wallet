@@ -99,24 +99,24 @@
 	
     <target name="ubuntuPackage" depends="jar,copyothers">
     	<mkdir dir="${ubuntu.package.dir}"/>
-	    <deb destfile="${ubuntu.package.dir}/bitcoinz-wallet_1.1.0.deb"
+	    <deb destfile="${ubuntu.package.dir}/bitcoinz-wallet_1.1.0.4.deb"
 	    	 control="${src.dir}/resources/ubuntu-package"
 	    	 verbose="true">
 
 	      <data src="${jar.dir}/${ant.project.name}.jar" type="file">
-	        <mapper type="perm" filemode="755" prefix="/usr/lib/zencash-gui-wallet"/>
+	        <mapper type="perm" filemode="755" prefix="/usr/lib/bitcoinz-wallet"/>
 	      </data>
 	      <data src="${jar.dir}/bitcoinj-core-0.14.5.jar" type="file">
-	        <mapper type="perm" filemode="755" prefix="/usr/lib/zencash-gui-wallet"/>
+	        <mapper type="perm" filemode="755" prefix="/usr/lib/bitcoinz-wallet"/>
 	      </data>
 	      <data src="${jar.dir}/bitcoinj-core-0.14.5_LICENSE.txt" type="file">
-	        <mapper type="perm" filemode="755" prefix="/usr/lib/zencash-gui-wallet"/>
+	        <mapper type="perm" filemode="755" prefix="/usr/lib/bitcoinz-wallet"/>
 	      </data>
 		  <data src="${jar.dir}/sqlite-jdbc-3.21.0.jar" type="file">
-			 <mapper type="perm" filemode="755" prefix="/usr/lib/zencash-gui-wallet"/>
+			 <mapper type="perm" filemode="755" prefix="/usr/lib/bitcoinz-wallet"/>
 		  </data>
 		  <data src="${jar.dir}/sqlite-jdbc-3.21.0_LICENSE.txt" type="file">
-			 <mapper type="perm" filemode="755" prefix="/usr/lib/zencash-gui-wallet"/>
+			 <mapper type="perm" filemode="755" prefix="/usr/lib/bitcoinz-wallet"/>
 		  </data>
 
 			<!-- TODO: As of Nov 2017 the IPFS wallet integration is suspended.
@@ -130,14 +130,14 @@
               <mapper type="perm" filemode="755" prefix="/usr/lib/zencash-gui-wallet/go-ipfs"/>
             </data>
             -->
-	      <data src="${src.dir}/resources/ubuntu-package/zencash-desktop-gui-wallet" type="file">
+	      <data src="${src.dir}/resources/ubuntu-package/bitcoinz-wallet" type="file">
 	        <mapper type="perm" filemode="755" prefix="/usr/bin"/>
 	      </data>
-	      <data src="${src.dir}/resources/ubuntu-package/ZENCashWallet.desktop" type="file">
+	      <data src="${src.dir}/resources/ubuntu-package/BitcoinZWallet.desktop" type="file">
 	        <mapper type="perm" filemode="755" prefix="/usr/share/applications"/>
 	      </data>
-	      <data src="${src.dir}/resources/ubuntu-package/ZEN-icon.png" type="file">
-	        <mapper type="perm" filemode="755" prefix="/usr/lib/zencash-gui-wallet"/>
+	      <data src="${src.dir}/resources/ubuntu-package/BitcoinZ.png" type="file">
+	        <mapper type="perm" filemode="755" prefix="/usr/lib/bitcoinz-wallet"/>
 	      </data>
 	    </deb>
 	</target>

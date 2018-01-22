@@ -1,8 +1,8 @@
 Package: bitcoinz-wallet
-Version: 1.1.0
+Version: 1.1.0.4
 Section: misc
 Priority: low
 Architecture: all
 Description: BitcoinZ Wallet
-Maintainer: ivan@vaklinov.com
+Maintainer: BitcoinZ@team.com
 Depends: default-jdk, bitcoinz
